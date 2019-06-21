@@ -6,6 +6,7 @@ module DiscourseDonations
       ::Stripe.api_key = secret_key
       @description = opts[:description]
       @currency = opts[:currency]
+      @zero_decimal_currencies = ['MGA', 'BIF', 'CLP', 'PYG', 'DFJ', 'RWF', 'GNF', 'UGX', 'JPY', 'VND', 'VUV', 'XAF', 'KMF', 'KRW', 'XOF', 'XPF']
     end
 
     def checkoutCharge(user = nil, email, token, amount)
@@ -227,7 +228,7 @@ module DiscourseDonations
 
     def create_plan(type, amount)
       id = create_plan_id(type, amount)
-      nickname = id.gsub(/_/, ' ').titleize
+      nickname = "#{SiteSetting.title} #{@currency.upcase} #{@zero_decimal_currencies.include?(@currency.upcase) ? amount : '%.2f' % (amount.to_i/100) } per #{type}"
 
       products = ::Stripe::Product.list(type: 'service')
 
@@ -257,7 +258,7 @@ module DiscourseDonations
     end
 
     def product_id
-      @product_id ||= "#{SiteSetting.title}_recurring_donation".freeze
+      @product_id ||= "#{SiteSetting.title.parameterize.underscore}_recurring_donation".freeze
     end
 
     def product_name
@@ -265,7 +266,7 @@ module DiscourseDonations
     end
 
     def create_plan_id(type, amount)
-      "discourse_donation_recurring_#{type}_#{amount}".freeze
+      "#{SiteSetting.title.parameterize.underscore}_recurring_donation_#{type}_#{amount}".freeze
     end
   end
 end
