@@ -23,7 +23,7 @@ export default Ember.Component.extend({
       }
 
       return $.extend({}, invoice.lines.data[0], {
-        anchor: invoice.date,
+        anchor: invoice.created,
         invoiceLink: invoice.invoice_pdf,
         receiptSent
       });
