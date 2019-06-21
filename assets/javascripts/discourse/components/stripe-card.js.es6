@@ -11,6 +11,7 @@ export default Ember.Component.extend({
   showTransactionFeeDescription: false,
   includeTransactionFee: true,
   showCustomAmount: Ember.computed.equal('amount', 'custom'),
+  hasCauses: Ember.computed.notEmpty('causes'),
 
   init() {
     this._super();
