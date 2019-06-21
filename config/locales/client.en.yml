@@ -31,8 +31,10 @@ en:
       nav_item: Donate
       title: "Make a Donation"
       amount: Amount
-      card: Card
-      submit: Donate
+      custom_amount: "Custom Amount"
+      custom_amount_placeholder: "Enter a number"
+      card: Credit or debit card
+      submit: Make Payment
       submit_with_create_account: Make Payment and Create Account
       invoice: "invoice"
       invoice_prefix: "You gave"
