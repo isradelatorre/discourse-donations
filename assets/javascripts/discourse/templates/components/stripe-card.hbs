@@ -26,13 +26,15 @@
     </label>
     <div class="controls controls-dropdown">
       {{combo-box valueAttribute="value" content=donateAmounts value=amount}}
-      {{#if showCustomAmount}}
+    </div>
+    {{#if showCustomAmount}}
+      <div class="controls">
         {{input type='number'
                 value=customAmountInput
                 class='custom-amount-input'
                 placeholder=(i18n 'discourse_donations.custom_amount_placeholder')}}
-      {{/if}}
-    </div>
+      </div>
+    {{/if}}
   </div>
 
   {{#if siteSettings.discourse_donations_enable_transaction_fee}}
