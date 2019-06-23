@@ -142,6 +142,15 @@ export default Ember.Component.extend({
     return amt;
   },
 
+  @computed('totalAmount')
+  amountValid(amount) {
+    if (amount < 1) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+
   @computed('email')
   emailValid(email) {
     return emailValidHelper(email);
@@ -162,9 +171,9 @@ export default Ember.Component.extend({
     return cause || !Discourse.SiteSettings.discourse_donations_cause_required;
   },
 
-  @computed('userReady', 'stripeReady', 'causeValid')
-  formIncomplete(userReady, stripeReady, causeValid) {
-    return !userReady || !stripeReady || !causeValid;
+  @computed('userReady', 'stripeReady', 'causeValid', 'amountValid')
+  formIncomplete(userReady, stripeReady, causeValid, amountValid) {
+    return !userReady || !stripeReady || !causeValid || !amountValid;
   },
 
   @computed('transactionInProgress', 'formIncomplete')
