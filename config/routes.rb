@@ -3,6 +3,4 @@ DiscourseDonations::Engine.routes.draw do
 
   resources :charges, only: [:index, :create]
   put '/charges/cancel-subscription' => 'charges#cancel_subscription'
-
-  resources :checkout, only: [:create]
 end

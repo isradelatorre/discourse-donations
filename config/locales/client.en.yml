@@ -4,8 +4,6 @@ en:
     discourse_donations_enable_create_accounts: "EXPERIMENTAL: Enable anonymous users to create accounts after successful payment"
     discourse_donations_secret_key: "Stripe Secret Key"
     discourse_donations_public_key: "Stripe Public Key"
-    discourse_donations_shop_name: "Shop Name shown in Stripe Checkout form"
-    discourse_donations_description: "Description shown in Stripe Checkout form"
     discourse_donations_currency: "Currency Code"
     discourse_donations_zip_code: "Show Zip Code"
     discourse_donations_billing_address: "Collect billing address"

@@ -9,25 +9,6 @@ module DiscourseDonations
       @zero_decimal_currencies = ['MGA', 'BIF', 'CLP', 'PYG', 'DFJ', 'RWF', 'GNF', 'UGX', 'JPY', 'VND', 'VUV', 'XAF', 'KMF', 'KRW', 'XOF', 'XPF']
     end
 
-    def checkoutCharge(user = nil, email, token, amount)
-      customer = customer(user,
-        email: email,
-        source: token,
-        create: true
-      )
-
-      return if !customer
-
-      charge = ::Stripe::Charge.create(
-        customer: customer.id,
-        amount: amount,
-        description: @description,
-        currency: @currency
-      )
-
-      charge
-    end
-
     def charge(user = nil, opts)
       customer = customer(user,
         email: opts[:email],
