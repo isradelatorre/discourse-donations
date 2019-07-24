@@ -25,10 +25,10 @@ module DiscourseDonations
     end
 
     # Workaround for rails-5 issue. See https://github.com/thoughtbot/shoulda-matchers/issues/1018#issuecomment-315876453
-    let(:allowed_params) { {create_account: 'true', email: 'email@example.com', password: 'secret', username: 'mr-pink', name: 'kirsten', amount: 100, stripeToken: 'rrurrrurrrrr'} }
+    let(:allowed_params) { {email: 'email@example.com', password: 'secret', username: 'mr-pink', name: 'kirsten', amount: 100, stripeToken: 'rrurrrurrrrr'} }
 
     it 'whitelists the params' do
-      should permit(:name, :username, :email, :password, :create_account).
+      should permit(:name, :username, :email, :password).
           for(:create, params: { params: allowed_params })
     end
 
@@ -36,85 +36,6 @@ module DiscourseDonations
       post :create, params: { email: 'foobar@example.com' }
       expect(body['messages'][0]).to end_with(I18n.t('donations.payment.success'))
       expect(response).to have_http_status(200)
-    end
-
-    it 'does not expect a username or email if accounts are not being created' do
-      current_user = log_in(:coding_horror)
-      post :create, params: { create_account: 'false' }
-      expect(body['messages'][0]).to end_with(I18n.t('donations.payment.success'))
-      expect(response).to have_http_status(200)
-    end
-
-    describe 'create accounts' do
-      describe 'create acccount disabled' do
-        let(:params) { { amount: 100, stripeToken: 'rrurrrurrrrr-rrruurrrr' } }
-
-        before do
-          SiteSetting.stubs(:discourse_donations_enable_create_accounts).returns(false)
-          ::Jobs.expects(:enqueue).never
-        end
-
-        it 'does not create user accounts' do
-          post :create, params: params
-        end
-
-        it 'does not create user accounts if the user is logged in' do
-          log_in :coding_horror
-          post :create, params: params
-        end
-
-        it 'does not create user accounts when settings are disabled and params are not' do
-          log_in :coding_horror
-          post :create, params: params.merge(create_account: true, email: 'email@example.com', password: 'secret', username: 'mr-brown', name: 'hacker-guy')
-        end
-      end
-
-      describe 'creating an account enabled' do
-        let(:params) { { create_account: 'true', email: 'email@example.com', password: 'secret', username: 'mr-pink', amount: 100, stripeToken: 'rrurrrurrrrr-rrruurrrr' } }
-
-        before do
-          SiteSetting.stubs(:discourse_donations_enable_create_accounts).returns(true)
-          Jobs.expects(:enqueue).with(:donation_user, anything)
-        end
-
-        it 'enqueues the user account create' do
-          post :create, params: params
-        end
-      end
-    end
-
-    describe 'new user' do
-      let(:params) { { create_account: 'true', email: 'email@example.com', password: 'secret', username: 'mr-pink', amount: 100, stripeToken: 'rrurrrurrrrr-rrruurrrr' } }
-
-      before { SiteSetting.stubs(:discourse_donations_enable_create_accounts).returns(true) }
-
-      describe 'requires an email' do
-        before { post :create, params: params.merge(email: '') }
-        include_examples 'failure response', 'login.missing_user_field'
-      end
-
-      describe 'requires a username' do
-        before { post :create, params: params.merge(username: '') }
-        include_examples 'failure response', 'login.missing_user_field'
-      end
-
-      describe 'reserved usernames' do
-        before do
-          User.expects(:reserved_username?).returns(true)
-          post :create, params: params
-        end
-
-        include_examples 'failure response', 'login.reserved_username'
-      end
-
-      describe 'minimum password length' do
-        before do
-          User.expects(:max_password_length).returns(params[:password].length - 1)
-          post :create, params: params
-        end
-
-        include_examples 'failure response', 'login.password_too_long'
-      end
     end
 
     describe 'rewards' do
@@ -125,26 +46,6 @@ module DiscourseDonations
         it 'has no rewards' do
           post :create, params: params
           expect(body['rewards']).to be_empty
-        end
-      end
-
-      describe 'new user' do
-        let(:params) { { create_account: 'true', email: 'dood@example.com', password: 'secretsecret', name: 'dood', username: 'mr-dood' } }
-
-        before { SiteSetting.stubs(:discourse_donations_enable_create_accounts).returns(true) }
-
-        include_examples 'no rewards' do
-          before do
-            stripe.stubs(:create).returns({ 'paid' => false })
-          end
-        end
-
-        include_examples 'no rewards' do
-          before do
-            stripe.stubs(:create).returns({ 'paid' => true })
-            SiteSetting.stubs(:discourse_donations_reward_group_name).returns(nil)
-            SiteSetting.stubs(:discourse_donations_reward_badge_name).returns(nil)
-          end
         end
       end
 

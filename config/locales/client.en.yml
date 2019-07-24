@@ -1,14 +1,17 @@
 en:
   site_settings:
     discourse_donations_enabled: "Enable the Discourse Donations plugin."
-    discourse_donations_enable_create_accounts: "EXPERIMENTAL: Enable anonymous users to create accounts after successful payment"
+    discourse_donations_subscription_required: "An active subscription is required for login (except staff and admin)."
+    discourse_donations_description: "Override Stripe"
     discourse_donations_secret_key: "Stripe Secret Key"
     discourse_donations_public_key: "Stripe Public Key"
+    discourse_donations_description: "Override Stripe's default description for once off payments."
     discourse_donations_currency: "Currency Code"
     discourse_donations_zip_code: "Show Zip Code"
     discourse_donations_billing_address: "Collect billing address"
     discourse_donations_reward_badge_name: "Grant this badge to user when a payment is successful"
     discourse_donations_reward_group_name: "Add the user to this group when a payment is successful"
+    discourse_donations_page_heading: "Heading to be added above donate form."
     discourse_donations_page_description: "Text to be added to /donate page. Markdown is supported."
     discourse_donations_enable_transaction_fee: "Give the user the option of including the Stripe transaction fee in their donation."
     discourse_donations_transaction_fee_fixed: "Fixed part of Stripe transaction fee (changes per region). See <a href='https://stripe.com/pricing'>Stripe's pricing for your region</a> and <a href='https://support.stripe.com/questions/can-i-charge-my-stripe-fees-to-my-customers'>Stripe's explaination of passing fees onto customers</a>."
@@ -33,7 +36,6 @@ en:
       custom_amount_placeholder: "Enter a number"
       card: Credit or debit card
       submit: Make Payment
-      submit_with_create_account: Make Payment and Create Account
       invoice: "invoice"
       invoice_prefix: "You gave"
       receipt: "Receipt sent to {{email}}."

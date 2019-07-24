@@ -19,6 +19,127 @@ extend_content_security_policy(
   script_src: ['https://js.stripe.com/v3/']
 )
 
+module SessionControllerPrepend
+ 
+  def create
+    if SiteSetting.discourse_donations_subscription_required?
+      params.require(:login)
+      login = params[:login].strip
+      login = login[1..-1] if login[0] == "@"
+      if user = User.find_by_username_or_email(login)
+        # If they need an active subscription
+        if login_has_no_active_subscription_for?(user)
+          cookies[:email] = { value: user.email, expires: 1.day.from_now }
+          no_active_subscription
+        else
+          super
+        end
+      else
+        super
+      end
+    else
+      super
+    end
+  end
+
+  def email_login
+    if SiteSetting.discourse_donations_subscription_required?
+      token = params[:token]
+      # Only check if it is confirmable so as not to 'expire' the token
+      if user = EmailToken.confirmable(token).user
+        # If they need an active subscription
+        if login_has_no_active_subscription_for?(user)
+          # Confirm the token if login is not allowed per email login pattern
+          EmailToken.confirm(token)
+          cookies[:email] = { value: user.email, expires: 1.day.from_now }
+          no_active_subscription
+        else
+          super
+        end
+      else
+        super
+      end
+    else
+      super
+    end
+  end
+
+  private
+
+  def login_has_no_active_subscription_for?(user)
+    SiteSetting.discourse_donations_subscription_required? && !user.subscription_active? && !user.admin? && !user.staff?
+  end
+
+  def no_active_subscription
+    render json: {
+      error: I18n.t("discourse_donations.login.has_no_active_subscription"),
+      reason: 'no_active_subscription',
+      redirect_to: '/donate'
+    }
+  end
+end
+
+module UsersControllerPrepend
+
+  def logon_after_password_reset
+    if SiteSetting.discourse_donations_subscription_required?
+      if !@user.subscription_active? && !@user.admin? && !@user.staff?
+        @success = I18n.t("discourse_donations.login.has_no_active_subscription")
+      else
+        super
+      end
+    else
+      super
+    end
+  end
+
+end
+
+module InvitesControllerPrepend
+
+  def perform_accept_invitation
+    if SiteSetting.discourse_donations_subscription_required?
+      params.require(:id)
+      params.permit(:username, :name, :password, user_custom_fields: {})
+      invite = Invite.find_by(invite_key: params[:id])
+
+      if invite.present?
+        begin
+          user = invite.redeem(username: params[:username], name: params[:name], password: params[:password], user_custom_fields: params[:user_custom_fields], ip_address: request.remote_ip)
+          if user.present? && (user.subscription_active? || user.admin? || user.staff?)
+            super
+          else
+            if user.present?
+              post_process_invite(user)
+            end
+            response = { success: true }
+            if user.present? && user.active?
+              response[:redirect_to] = '/donate'
+              response[:message] = I18n.t("discourse_donations.login.has_no_active_subscription")
+            else
+              response[:message] = I18n.t('invite.confirm_email')
+            end
+
+            render json: response
+          end
+
+        rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+          render json: {
+            success: false,
+            errors: e.record&.errors&.to_hash || {},
+            message: I18n.t('invite.error_message')
+          }
+        end
+      else
+        super
+      end
+    else
+      super
+    end
+  end
+
+end
+
 after_initialize do
   load File.expand_path('../lib/discourse_donations/engine.rb', __FILE__)
   load File.expand_path('../config/routes.rb', __FILE__)
@@ -29,6 +150,19 @@ after_initialize do
   Discourse::Application.routes.append do
     mount ::DiscourseDonations::Engine, at: 'donate'
   end
+  
+
+  ::SessionController.class_eval do
+    prepend SessionControllerPrepend
+  end
+
+  ::UsersController.class_eval do
+    prepend UsersControllerPrepend
+  end
+
+  ::InvitesController.class_eval do
+    prepend InvitesControllerPrepend
+  end
 
   class ::User
     def stripe_customer_id
@@ -36,6 +170,15 @@ after_initialize do
         custom_fields['stripe_customer_id'].to_s
       else
         nil
+      end
+    end
+    def subscription_active?
+      stripe = DiscourseDonations::Stripe.new(SiteSetting.discourse_donations_secret_key, {})
+      customer = stripe.customer(self, {})
+      if customer&.subscriptions&.any? { |s| s.status == "active" }
+        true
+      else
+        false
       end
     end
   end

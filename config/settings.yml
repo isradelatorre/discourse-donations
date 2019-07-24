@@ -5,10 +5,11 @@ plugins:
   discourse_donations_secret_key:
     default: ''
     client: false
+    secret: true
   discourse_donations_public_key:
     default: ''
     client: true
-  discourse_donations_enable_create_accounts:
+  discourse_donations_subscription_required:
     client: true
     default: false
   discourse_donations_description:
@@ -29,6 +30,9 @@ plugins:
   discourse_donations_reward_group_name:
     client: false
     default: 'Donation'
+  discourse_donations_page_heading:
+    client: true
+    default: 'Make a Donation'
   discourse_donations_page_description:
     client: true
     default: ''

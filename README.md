@@ -1,7 +1,5 @@
 # Discourse Donations
 
-[![Build Status](https://travis-ci.org/chrisbeach/discourse-donations.svg?branch=master)](https://travis-ci.org/choiceaustralia/discourse-donations)
-
 Accept donations from visitors to your [Discourse](https://www.discourse.org/) forum. Integrates with [Stripe](https://stripe.com).
 
 ## Installation
@@ -22,9 +20,9 @@ Accept donations from visitors to your [Discourse](https://www.discourse.org/) f
 1. Click **Make Payment**:
 ![Enter card details](doc/post-payment.png)
 
-## Creating new user accounts
+## Subscription required (optional)
 
-**This is an experimental feature.** A user can create a new account if they makes a successful donation. Enable this in settings. When a user is not logged in, they will be asked to enter details for a new user account. This feature doesn't support mandatory custom user fields yet.
+Optionally only allow users (except admin and staff) to log on if they have an active subscription. If they do not they will be redirected to the donate page. **This feature does not work if** you use SSO Login, Omniauth (the built in Google, Twitter etc.) login methods, or you create and log on activated users with the API. 
 
 ## Testing
 
@@ -38,7 +36,7 @@ Accept donations from visitors to your [Discourse](https://www.discourse.org/) f
 
 ## TODO
 
-* Handle custom fields
+* Handle subscription required authentication challenge for SSO / Omniauth / API 
 * Acceptance test in RSpec not qunit.
 
 ## Tested Credit Card Numbers

@@ -1,6 +1,7 @@
 module DiscourseDonations
   class ChargesController < ::ApplicationController
     skip_before_action :verify_authenticity_token, only: [:create]
+    skip_before_action :redirect_to_login_if_required
 
     before_action :ensure_logged_in, only: [:cancel_subscription]
     before_action :set_user, only: [:index, :create]
@@ -24,18 +25,6 @@ module DiscourseDonations
       Rails.logger.info user_params.inspect
 
       output = { 'messages' => [], 'rewards' => [] }
-
-      if create_account
-        if !@email.present? || !user_params[:username].present?
-          output['messages'] << I18n.t('login.missing_user_field')
-        end
-        if user_params[:password] && user_params[:password].length > User.max_password_length
-          output['messages'] << I18n.t('login.password_too_long')
-        end
-        if user_params[:username] && ::User.reserved_username?(user_params[:username])
-          output['messages'] << I18n.t('login.reserved_username')
-        end
-      end
 
       if output['messages'].present?
         render(json: output.merge(success: false)) && (return)
@@ -101,14 +90,10 @@ module DiscourseDonations
         output['rewards'] << { type: :group, name: group_name } if group_name
         output['rewards'] << { type: :badge, name: badge_name } if badge_name
 
-        if create_account && @email.present?
-          args = user_params.to_h.slice(:email, :username, :password, :name).merge(rewards: output['rewards'])
-          Jobs.enqueue(:donation_user, args)
-        end
-
         if SiteSetting.discourse_donations_cause_category
           Jobs.enqueue(:update_category_donation_statistics)
         end
+        cookies&.delete(:email)
       end
 
       render json: output
@@ -129,10 +114,6 @@ module DiscourseDonations
     end
 
     private
-
-    def create_account
-      user_params[:create_account] == 'true' && SiteSetting.discourse_donations_enable_create_accounts
-    end
 
     def reward?(payment)
       payment.present? && payment.successful?
@@ -158,7 +139,7 @@ module DiscourseDonations
     end
 
     def user_params
-      params.permit(:user_id, :name, :username, :email, :password, :stripeToken, :cause, :type, :amount, :create_account)
+      params.permit(:user_id, :name, :username, :email, :password, :stripeToken, :cause, :type, :amount)
     end
 
     def set_user
@@ -178,6 +159,8 @@ module DiscourseDonations
 
       if user_params[:email].present?
         email = user_params[:email]
+      elsif cookies[:email].present?
+        email = cookies[:email]
       elsif @user
         email = @user.try(:email)
       end

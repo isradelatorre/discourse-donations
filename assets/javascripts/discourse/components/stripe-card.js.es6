@@ -12,13 +12,13 @@ export default Ember.Component.extend({
   includeTransactionFee: true,
   showCustomAmount: Ember.computed.equal('amount', 'custom'),
   hasCauses: Ember.computed.notEmpty('causes'),
+  hasEmail: Discourse.User.current() ? true : $.cookie("email") ? true : false,
 
   init() {
     this._super();
     const user = this.get('currentUser');
     const settings = Discourse.SiteSettings;
 
-    this.set('create_accounts', !user && settings.discourse_donations_enable_create_accounts);
     this.set('stripe', Stripe(settings.discourse_donations_public_key));
 
     const types = settings.discourse_donations_types.split('|') || [];
@@ -27,7 +27,7 @@ export default Ember.Component.extend({
     this.setProperties({
       types,
       type: types[0],
-      amount: amounts[0].value
+      amount: amounts[0].value,
     });
   },
 
@@ -163,7 +163,7 @@ export default Ember.Component.extend({
 
   @computed('currentUser', 'emailValid')
   userReady(currentUser, emailValid) {
-    return currentUser || emailValid;
+    return currentUser || emailValid || $.cookie("email");
   },
 
   @computed('cause')
@@ -253,7 +253,6 @@ export default Ember.Component.extend({
             amount,
             email: self.get('email'),
             username: self.get('username'),
-            create_account: self.get('create_accounts')
           };
 
           if(!self.get('paymentSuccess')) {

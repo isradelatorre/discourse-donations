@@ -9,3 +9,6 @@ en:
       error:
         not_found: "Subscription not found."
         not_cancelled: "Subscription not cancelled."
+  discourse_donations:
+    login:
+      has_no_active_subscription: "You must have an active subscription associated with your account to log in. Make sure you have used the same email address."
