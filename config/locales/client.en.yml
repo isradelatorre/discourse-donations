@@ -26,6 +26,7 @@ en:
     discourse_donations_cause_month: "Show monthly total of donations to each cause."
     errors:
       discourse_donations_amount_must_be_number: "Amounts must be numbers"
+      subscription_required_setting_invalid: "This setting cannot be enabled if you are using SSO or the built-in OmniAuth log on methods."
 
   js:
     discourse_donations:

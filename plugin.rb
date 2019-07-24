@@ -140,6 +140,8 @@ module InvitesControllerPrepend
 
 end
 
+load File.expand_path('../lib/validators/subscription_required_validator.rb', __FILE__)
+
 after_initialize do
   load File.expand_path('../lib/discourse_donations/engine.rb', __FILE__)
   load File.expand_path('../config/routes.rb', __FILE__)

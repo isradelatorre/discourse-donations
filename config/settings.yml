@@ -12,6 +12,7 @@ plugins:
   discourse_donations_subscription_required:
     client: true
     default: false
+    validator: "SubscriptionRequiredValidator"
   discourse_donations_description:
     client: true
     default: ''
