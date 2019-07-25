@@ -66,7 +66,7 @@ module DiscourseDonations
         }],
         metadata: {
           discourse_cause: opts[:cause],
-          discourse_user_id: user.id
+          discourse_user_id: user&.id
         }
       )
     end
