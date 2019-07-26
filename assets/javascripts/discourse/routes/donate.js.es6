@@ -15,6 +15,7 @@ export default DiscourseRoute.extend({
     let charges = [];
     let subscriptions = [];
     let customer = {};
+    let userEmail = '';
 
     controller.set('loadingDonations', true);
 
@@ -23,12 +24,14 @@ export default DiscourseRoute.extend({
         charges = result.charges;
         subscriptions = result.subscriptions;
         customer = result.customer;
+        userEmail = result.userEmail
       }
 
       controller.setProperties({
         charges: Ember.A(charges),
         subscriptions: Ember.A(subscriptions),
-        customer
+        customer,
+        userEmail
       });
     }).catch(popupAjaxError).finally(() => {
       controller.set('loadingDonations', false);

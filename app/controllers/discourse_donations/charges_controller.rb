@@ -17,7 +17,7 @@ module DiscourseDonations
 
         result = list_result if list_result.present?
       end
-
+      result[:userEmail] = @email
       render json: success_json.merge(result)
     end
 
@@ -93,7 +93,6 @@ module DiscourseDonations
         if SiteSetting.discourse_donations_cause_category
           Jobs.enqueue(:update_category_donation_statistics)
         end
-        cookies&.delete(:email)
       end
 
       render json: output
@@ -161,6 +160,7 @@ module DiscourseDonations
         email = user_params[:email]
       elsif cookies[:email].present?
         email = cookies[:email]
+        cookies&.delete(:email)
       elsif @user
         email = @user.try(:email)
       end

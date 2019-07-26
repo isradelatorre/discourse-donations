@@ -1,11 +1,10 @@
 <h3>{{siteSettings.discourse_donations_page_heading}}</h3>
-
 <div class="donations-page-description">
   {{cook-text siteSettings.discourse_donations_page_description}}
 </div>
 
 <div class="donations-page-payment">
-  {{stripe-card charges=charges subscriptions=subscriptions}}
+  {{stripe-card charges=charges subscriptions=subscriptions userEmail=userEmail}}
 </div>
 
 {{#if currentUser}}
