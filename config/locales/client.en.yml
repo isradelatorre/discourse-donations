@@ -32,6 +32,8 @@ en:
     discourse_donations:
       nav_item: Donate
       title: "Make a Donation"
+      subscription_required_notice: >
+        An active subscription / recurring donation is required to log in to {{site}}
       amount: Amount
       custom_amount: "Custom Amount"
       custom_amount_placeholder: "Enter a number"

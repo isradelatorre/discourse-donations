@@ -1,0 +1,12 @@
+{{#if showSubscriptionRequiredBanner}}
+  <div class="container">
+    <div class="row">
+      <div class="consent_banner alert alert-info">
+        <div class="close" {{action "dismiss"}}>
+          {{d-icon 'times'}}
+        </div>
+        {{i18n 'discourse_donations.subscription_required_notice' site=siteSettings.title}}.
+      </div>
+    </div>
+  </div>
+{{/if}}
