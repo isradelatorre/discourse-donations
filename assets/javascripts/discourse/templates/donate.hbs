@@ -1,27 +1,29 @@
-{{#unless currentUser}}
-  {{subscription-required-banner}}
-{{/unless}}
-<h3>{{siteSettings.discourse_donations_page_heading}}</h3>
-<div class="donations-page-description">
-  {{cook-text siteSettings.discourse_donations_page_description}}
-</div>
-
-<div class="donations-page-payment">
-  {{stripe-card charges=charges subscriptions=subscriptions userEmail=userEmail}}
-</div>
-
-{{#if currentUser}}
-  <div class="donations-page-donations">
-    <h3>{{i18n 'discourse_donations.donations.title'}}</h3>
-    {{#if loadingDonations}}
-      <span>{{i18n 'discourse_donations.donations.loading'}}</span>
-      {{loading-spinner size='small'}}
-    {{else}}
-      {{#if hasDonations}}
-        {{donation-list charges=charges subscriptions=subscriptions customer=customer}}
-      {{else}}
-        {{i18n 'discourse_donations.donations.none'}}
-      {{/if}}
-    {{/if}}  
+<div class="container">
+  {{#unless currentUser}}
+    {{subscription-required-banner}}
+  {{/unless}}
+  <h3>{{siteSettings.discourse_donations_page_heading}}</h3>
+  <div class="donations-page-description">
+    {{cook-text siteSettings.discourse_donations_page_description}}
   </div>
-{{/if}}
+
+  <div class="donations-page-payment">
+    {{stripe-card charges=charges subscriptions=subscriptions userEmail=userEmail}}
+  </div>
+
+  {{#if currentUser}}
+    <div class="donations-page-donations">
+      <h3>{{i18n 'discourse_donations.donations.title'}}</h3>
+      {{#if loadingDonations}}
+        <span>{{i18n 'discourse_donations.donations.loading'}}</span>
+        {{loading-spinner size='small'}}
+      {{else}}
+        {{#if hasDonations}}
+          {{donation-list charges=charges subscriptions=subscriptions customer=customer}}
+        {{else}}
+          {{i18n 'discourse_donations.donations.none'}}
+        {{/if}}
+      {{/if}}  
+    </div>
+  {{/if}}
+</div>

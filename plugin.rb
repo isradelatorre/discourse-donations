@@ -8,7 +8,8 @@ gem 'net-http-persistent', '3.0.1', {require: false}
 gem 'stripe', '4.21.3'
 
 register_asset "stylesheets/common/discourse-donations.scss"
-register_asset "stylesheets/mobile/discourse-donations.scss"
+register_asset "stylesheets/desktop/discourse-donations.scss", :desktop
+register_asset "stylesheets/mobile/discourse-donations.scss", :mobile
 
 enabled_site_setting :discourse_donations_enabled
 

@@ -65,9 +65,9 @@
     </div>
   {{/if}}
 
-  <div class="control-group" style="width: 550px;">
+  <div class="control-group">
     <label class="control-label" for="card-element">{{i18n 'discourse_donations.card'}}</label>
-    <div class="controls">
+    <div class="controls stripe-card-element-container">
       <div id="card-element"></div>
       {{#if stripeError}}
         <div class="stripe-error">{{stripeError}}</div>
