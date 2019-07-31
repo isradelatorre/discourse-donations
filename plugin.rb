@@ -1,8 +1,8 @@
 # name: discourse-donations
 # about: Integrates Stripe into Discourse to allow forum visitors to make donations
-# version: 1.11.1
-# url: https://github.com/chrisbeach/discourse-donations
-# authors: Rimian Perkins, Chris Beach, Angus McLeod
+# version: 1.12.0
+# url: https://github.com/haroldus-/discourse-donations
+# authors: Rimian Perkins, Chris Beach, Angus McLeod, haroldus-
 
 gem 'net-http-persistent', '3.0.1', {require: false}
 gem 'stripe', '4.21.3'
