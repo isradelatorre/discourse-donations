@@ -5,7 +5,7 @@
 # authors: Rimian Perkins, Chris Beach, Angus McLeod, haroldus-
 
 gem 'net-http-persistent', '3.0.1', {require: false}
-gem 'stripe', '4.21.3'
+gem 'stripe', '5.18.0'
 
 register_asset "stylesheets/common/discourse-donations.scss"
 register_asset "stylesheets/desktop/discourse-donations.scss", :desktop
